@@ -1,1 +1,839 @@
 
+# Let me create the finalized website code and save it to a file
+# This will be the complete, production-ready version
+
+website_code = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Ice Tiers - Minecraft PvP Leaderboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ice-blue: #00d4ff;
+            --ice-glow: rgba(0, 212, 255, 0.3);
+            --dark-navy: #0a0e1a;
+            --darker-navy: #060914;
+            --navy-card: #0f1729;
+            --navy-border: #1a2744;
+            --white: #e0f2fe;
+            --silver: #94a3b8;
+            --gold: #ffd700;
+            --silver-rank: #c0c0c0;
+            --bronze: #cd7f32;
+            --glass-bg: rgba(15, 23, 41, 0.8);
+            --glass-border: rgba(0, 212, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker-navy);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .mc-font { font-family: 'Press Start 2P', cursive; letter-spacing: 1px; }
+
+        /* Snowfall */
+        .snowfall {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: fall linear infinite;
+            filter: blur(1px);
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh) rotate(360deg); }
+        }
+
+        /* Background */
+        .bg-texture {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(0, 100, 255, 0.03) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+
+        /* Nav */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 20, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--ice-blue), #0066ff);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 20px var(--ice-glow);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px var(--ice-glow); }
+            50% { box-shadow: 0 0 40px var(--ice-glow), 0 0 60px rgba(0, 212, 255, 0.1); }
+        }
+
+        .logo-text {
+            color: var(--ice-blue);
+            font-size: 1.2rem;
+            text-shadow: 0 0 20px var(--ice-glow);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--silver);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--ice-blue);
+            text-shadow: 0 0 10px var(--ice-glow);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 2px;
+            background: var(--ice-blue);
+            transition: width 0.3s;
+            box-shadow: 0 0 10px var(--ice-glow);
+        }
+
+        .nav-links a:hover::after { width: 100%; }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--ice-blue), #fff, var(--ice-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.3));
+        }
+
+        .hero-slogan {
+            font-size: 1.5rem;
+            color: var(--silver);
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-slogan span {
+            color: var(--ice-blue);
+            font-weight: 600;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem 2.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--ice-blue), transparent);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--ice-blue);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--ice-blue);
+            text-shadow: 0 0 20px var(--ice-glow);
+        }
+
+        .stat-label {
+            color: var(--silver);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            background: var(--navy-card);
+            border: 1px solid var(--navy-border);
+            border-radius: 12px;
+            color: var(--white);
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--ice-blue);
+            box-shadow: 0 0 20px var(--ice-glow);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--silver);
+        }
+
+        .filter-select {
+            padding: 0.9rem 1rem;
+            background: var(--navy-card);
+            border: 1px solid var(--navy-border);
+            border-radius: 12px;
+            color: var(--white);
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .filter-select:focus { border-color: var(--ice-blue); }
+
+        /* Leaderboard */
+        .leaderboard-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px;
+            padding: 1.2rem 1.5rem;
+            background: rgba(0, 212, 255, 0.05);
+            border-bottom: 1px solid var(--glass-border);
+            font-weight: 600;
+            color: var(--silver);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(26, 39, 68, 0.5);
+            align-items: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(0, 212, 255, 0.03);
+        }
+
+        .leaderboard-row.top-1 {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.08), transparent);
+            border-left: 3px solid var(--gold);
+        }
+
+        .leaderboard-row.top-1 .rank-number {
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            font-size: 1.5rem;
+        }
+
+        .leaderboard-row.top-2 {
+            background: linear-gradient(90deg, rgba(192, 192, 192, 0.08), transparent);
+            border-left: 3px solid var(--silver-rank);
+        }
+
+        .leaderboard-row.top-2 .rank-number {
+            color: var(--silver-rank);
+            text-shadow: 0 0 20px rgba(192, 192, 192, 0.4);
+            font-size: 1.3rem;
+        }
+
+        .leaderboard-row.top-3 {
+            background: linear-gradient(90deg, rgba(205, 127, 50, 0.08), transparent);
+            border-left: 3px solid var(--bronze);
+        }
+
+        .leaderboard-row.top-3 .rank-number {
+            color: var(--bronze);
+            text-shadow: 0 0 20px rgba(205, 127, 50, 0.4);
+            font-size: 1.2rem;
+        }
+
+        .rank-number {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .player-avatar {
+            width: 48px; height: 48px;
+            border-radius: 8px;
+            image-rendering: pixelated;
+            border: 2px solid var(--navy-border);
+            transition: all 0.3s;
+        }
+
+        .leaderboard-row:hover .player-avatar {
+            border-color: var(--ice-blue);
+            box-shadow: 0 0 15px var(--ice-glow);
+            transform: scale(1.1);
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        /* Tier Badges */
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid;
+        }
+
+        .tier-ht1 { background: rgba(255, 215, 0, 0.15); color: var(--gold); border-color: rgba(255, 215, 0, 0.3); box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
+        .tier-lt1 { background: rgba(255, 215, 0, 0.08); color: #ffe44d; border-color: rgba(255, 228, 77, 0.2); }
+        .tier-ht2 { background: rgba(0, 212, 255, 0.15); color: var(--ice-blue); border-color: rgba(0, 212, 255, 0.3); box-shadow: 0 0 10px rgba(0, 212, 255, 0.1); }
+        .tier-lt2 { background: rgba(0, 212, 255, 0.08); color: #66e5ff; border-color: rgba(102, 229, 255, 0.2); }
+        .tier-ht3 { background: rgba(0, 255, 136, 0.15); color: #00ff88; border-color: rgba(0, 255, 136, 0.3); }
+        .tier-lt3 { background: rgba(0, 255, 136, 0.08); color: #66ffb3; border-color: rgba(102, 255, 179, 0.2); }
+        .tier-ht4 { background: rgba(255, 100, 0, 0.15); color: #ff6400; border-color: rgba(255, 100, 0, 0.3); }
+        .tier-lt4 { background: rgba(255, 100, 0, 0.08); color: #ff9966; border-color: rgba(255, 153, 102, 0.2); }
+        .tier-ht5 { background: rgba(255, 50, 50, 0.15); color: #ff3232; border-color: rgba(255, 50, 50, 0.3); }
+        .tier-lt5 { background: rgba(255, 50, 50, 0.08); color: #ff6666; border-color: rgba(255, 102, 102, 0.2); }
+
+        /* Footer */
+        footer {
+            margin-top: 4rem;
+            padding: 3rem 2rem;
+            background: rgba(6, 9, 20, 0.8);
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--silver);
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--ice-blue);
+            transform: translateY(-3px);
+            text-shadow: 0 0 20px var(--ice-glow);
+        }
+
+        .footer-text {
+            color: var(--silver);
+            font-size: 0.9rem;
+        }
+
+        .footer-text span { color: var(--ice-blue); }
+
+        /* Glow animations */
+        .glow-gold { animation: glowGold 2s ease-in-out infinite alternate; }
+        @keyframes glowGold {
+            from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+            to { box-shadow: 0 0 30px rgba(255, 215, 0, 0.4), 0 0 60px rgba(255, 215, 0, 0.1); }
+        }
+
+        .glow-silver { animation: glowSilver 2s ease-in-out infinite alternate; }
+        @keyframes glowSilver {
+            from { box-shadow: 0 0 10px rgba(192, 192, 192, 0.2); }
+            to { box-shadow: 0 0 30px rgba(192, 192, 192, 0.3), 0 0 60px rgba(192, 192, 192, 0.1); }
+        }
+
+        .glow-bronze { animation: glowBronze 2s ease-in-out infinite alternate; }
+        @keyframes glowBronze {
+            from { box-shadow: 0 0 10px rgba(205, 127, 50, 0.2); }
+            to { box-shadow: 0 0 30px rgba(205, 127, 50, 0.3), 0 0 60px rgba(205, 127, 50, 0.1); }
+        }
+
+        /* Loading & Error */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--silver);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+            color: var(--ice-blue);
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error {
+            text-align: center;
+            padding: 3rem;
+            color: #ff6464;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--silver);
+            font-size: 1.1rem;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--navy-border);
+        }
+
+        .last-updated {
+            text-align: center;
+            color: var(--silver);
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .hero-slogan { font-size: 1rem; }
+            .leaderboard-header, .leaderboard-row {
+                grid-template-columns: 50px 1fr 80px;
+            }
+            .nav-links { gap: 1rem; }
+            .hero-stats { gap: 1rem; }
+            .stat-card { padding: 1rem 1.5rem; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--darker-navy); }
+        ::-webkit-scrollbar-thumb { background: var(--navy-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ice-blue); }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-texture"></div>
+    <div class="bg-grid"></div>
+    <div class="snowfall" id="snowfall"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">❄️</div>
+                <span class="logo-text mc-font">Blue Ice Tiers</span>
+            </a>
+            <div class="nav-links">
+                <a href="#leaderboard">Leaderboard</a>
+                <a href="https://discord.gg/zrU7ebEZm" target="_blank">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="mc-font">Blue Ice Tiers</h1>
+        <p class="hero-slogan">"Climb the <span>Frozen Ladder</span>"</p>
+        
+        <div class="hero-stats" id="heroStats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalPlayers">0</div>
+                <div class="stat-label">Ranked Players</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="highestTier">-</div>
+                <div class="stat-label">Highest Tier</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container" id="leaderboard">
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search players..." oninput="filterPlayers()">
+            </div>
+            <select class="filter-select" id="tierFilter" onchange="filterPlayers()">
+                <option value="all">All Tiers</option>
+                <option value="HT1">HT1</option>
+                <option value="LT1">LT1</option>
+                <option value="HT2">HT2</option>
+                <option value="LT2">LT2</option>
+                <option value="HT3">HT3</option>
+                <option value="LT3">LT3</option>
+                <option value="HT4">HT4</option>
+                <option value="LT4">LT4</option>
+                <option value="HT5">HT5</option>
+                <option value="LT5">LT5</option>
+            </select>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard-container">
+            <div class="leaderboard-header">
+                <div>Rank</div>
+                <div>Player</div>
+                <div>Tier</div>
+            </div>
+            <div id="leaderboardBody">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i><br><br>
+                    Loading leaderboard...
+                </div>
+            </div>
+        </div>
+        <div class="last-updated" id="lastUpdated"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://discord.gg/zrU7ebEZm" target="_blank" title="Discord">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+                <a href="https://youtube.com" target="_blank" title="YouTube">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+            </div>
+            <p class="footer-text">
+                <span class="mc-font">Blue Ice Tiers</span> — Minecraft PvP Leaderboard<br>
+                Get ranked on our <a href="https://discord.gg/zrU7ebEZm" style="color: var(--ice-blue);">Discord server</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== CONFIG ====================
+        // REPLACE WITH YOUR JSONBIN VALUES
+        const JSONBIN_API_KEY = "$2a$10$YOUR_JSONBIN_MASTER_KEY_HERE";
+        const JSONBIN_BIN_ID = "YOUR_BIN_ID_HERE";
+        const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`;
+
+        // Tier configuration
+        const TIER_ORDER = {
+            'HT1': 1, 'LT1': 2,
+            'HT2': 3, 'LT2': 4,
+            'HT3': 5, 'LT3': 6,
+            'HT4': 7, 'LT4': 8,
+            'HT5': 9, 'LT5': 10
+        };
+
+        const TIER_COLORS = {
+            'HT1': 'tier-ht1', 'LT1': 'tier-lt1',
+            'HT2': 'tier-ht2', 'LT2': 'tier-lt2',
+            'HT3': 'tier-ht3', 'LT3': 'tier-lt3',
+            'HT4': 'tier-ht4', 'LT4': 'tier-lt4',
+            'HT5': 'tier-ht5', 'LT5': 'tier-lt5'
+        };
+
+        // State
+        let allPlayers = [];
+        let filteredPlayers = [];
+
+        // Initialize
+        function init() {
+            createSnowfall();
+            fetchLeaderboard();
+            setInterval(fetchLeaderboard, 30000);
+        }
+
+        // Fetch data from JSONBin
+        async function fetchLeaderboard() {
+            try {
+                const response = await fetch(JSONBIN_URL, {
+                    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const data = await response.json();
+                allPlayers = data.record || [];
+                
+                allPlayers.sort((a, b) => {
+                    const orderA = TIER_ORDER[a.tier] || 99;
+                    const orderB = TIER_ORDER[b.tier] || 99;
+                    return orderA - orderB;
+                });
+                
+                filterPlayers();
+                updateStats();
+                updateTimestamp();
+            } catch (err) {
+                document.getElementById('leaderboardBody').innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i><br><br>
+                        Failed to load leaderboard.<br>
+                        Please check your JSONBin configuration.
+                    </div>
+                `;
+                console.error(err);
+            }
+        }
+
+        // Filter and render
+        function filterPlayers() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const tier = document.getElementById('tierFilter').value;
+            
+            filteredPlayers = allPlayers.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search);
+                const matchTier = tier === 'all' || p.tier === tier;
+                return matchSearch && matchTier;
+            });
+            
+            renderLeaderboard();
+        }
+
+        // Render
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboardBody');
+            
+            if (filteredPlayers.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i><br>
+                        No players found
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredPlayers.map((player, index) => {
+                const rank = index + 1;
+                const tierClass = TIER_COLORS[player.tier] || 'tier-ht3';
+                const topClass = rank === 1 ? 'top-1 glow-gold' : 
+                                rank === 2 ? 'top-2 glow-silver' : 
+                                rank === 3 ? 'top-3 glow-bronze' : '';
+                
+                return `
+                    <div class="leaderboard-row ${topClass}">
+                        <div class="rank-number">#${rank}</div>
+                        <div class="player-info">
+                            <img src="https://mc-heads.net/avatar/${encodeURIComponent(player.name)}/64" 
+                                 alt="${player.name}" 
+                                 class="player-avatar"
+                                 onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/64'">
+                            <span class="player-name">${player.name}</span>
+                        </div>
+                        <div>
+                            <span class="tier-badge ${tierClass}">
+                                <i class="fas fa-shield-alt"></i> ${player.tier}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('totalPlayers').textContent = allPlayers.length;
+            
+            if (allPlayers.length > 0) {
+                const best = allPlayers.reduce((best, p) => 
+                    TIER_ORDER[p.tier] < TIER_ORDER[best.tier] ? p : best
+                );
+                document.getElementById('highestTier').textContent = best.tier;
+            } else {
+                document.getElementById('highestTier').textContent = '-';
+            }
+        }
+
+        // Update timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = 
+                `Last updated: ${now.toLocaleTimeString()}`;
+        }
+
+        // Snowfall effect
+        function createSnowfall() {
+            const container = document.getElementById('snowfall');
+            for (let i = 0; i < 50; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                const size = Math.random() * 4 + 2;
+                flake.style.width = `${size}px`;
+                flake.style.height = `${size}px`;
+                flake.style.left = `${Math.random() * 100}%`;
+                flake.style.animationDuration = `${Math.random() * 8 + 6}s`;
+                flake.style.animationDelay = `${Math.random() * 10}s`;
+                flake.style.opacity = Math.random() * 0.6 + 0.2;
+                container.appendChild(flake);
+            }
+        }
+
+        // Start
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>'''
+
+# Save to file
+with open('/mnt/agents/output/index.html', 'w', encoding='utf-8') as f:
+    f.write(website_code)
+
+print("Website code saved successfully!")
+print(f"File size: {len(website_code)} characters")
+
